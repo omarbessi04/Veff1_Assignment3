@@ -121,22 +121,27 @@ app.delete(apiPath + version + "books/:bookId", (req, res) =>{
     .json(deleted_book);
   });
 
-app.delete(apiPath + version + "books/:bookId", (req, res) =>{
-    let bookID_to_delete = req.params.bookId
-    let deleted_book
-    bookID_to_delete = parseInt(bookID_to_delete)
-    for (let i = books.length-1; i >= 0; i--) {
-      const book = books[i];
-      if (book["id"] == bookID_to_delete){
-        deleted_book = book;
-        books.splice(i, 1)
-        break
-      }
+app.patch(apiPath + version + "genres/:currentGenreId/books/:bookData", (req, res) =>{
+  const book_id = parseInt(req.params.bookData)
+  const genre_id = req.params.currentGenreId
+  let updated_book
+  console.log(req.body)
+
+  for (let i = 0; i < books.length; i++) {
+    const book = books[i]
+    if (book["id"] === book_id){
+      console.log("YES")
+      updated_book = book
+      books[i] = req.body
+      console.log(books[i])
+      break
     }
-    res
-    .status(200)
-    .json(deleted_book);
-  });
+  };
+  res
+  .status(200)
+  .json(updated_book)
+
+});
 
 /* YOUR CODE ENDS HERE */
 
