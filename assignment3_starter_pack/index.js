@@ -78,7 +78,6 @@ app.delete(apiPath + version + "books/:bookId", (req, res) =>{
       if (book["id"] == bookID_to_delete){
         deleted_book = book;
         books.splice(i, 1)
-        console.log("hey")
         break
       }
     }
