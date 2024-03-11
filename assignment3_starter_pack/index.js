@@ -107,6 +107,7 @@ app.post(apiPath + version + "books", (req, res) =>{
 
 //DELETE book
 app.delete(apiPath + version + "books/:bookId", (req, res) =>{
+  try{
     let bookID_to_delete = req.params.bookId
     let deleted_book
     bookID_to_delete = parseInt(bookID_to_delete)
@@ -121,7 +122,15 @@ app.delete(apiPath + version + "books/:bookId", (req, res) =>{
     res
     .status(200)
     .json(deleted_book);
+  }
+  catch(error){
+    res
+    .status(404)
+    .json({message: "book not found"})
+  }
 });
+
+
 
 app.patch(apiPath + version + "genres/:currentGenreId/books/:bookData", (req, res) =>{
   const book_id = parseInt(req.params.bookData)
@@ -165,6 +174,7 @@ app.post(apiPath + version + "genres", (req, res) =>{
 
 // DELETE genre
 app.delete(apiPath + version + "books/:genreId", (req, res) =>{
+  try
     let deleted_genre;
     let genreID_to_delete = req.params.genreId;
     genreID_to_delete = parseInt(genreID_to_delete);
@@ -188,6 +198,8 @@ app.delete(apiPath + version + "books/:genreId", (req, res) =>{
     res
     .status(200)
     .json(deleted_genre);
+  catch
+    
   });
 });
 /* YOUR CODE ENDS HERE */
