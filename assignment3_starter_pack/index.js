@@ -69,6 +69,24 @@ app.get(apiPath + version + "genres", (req, res) =>{
     .json(genres);
 });
 
+app.delete(apiPath + version + "books/:bookId", (req, res) =>{
+    let bookID_to_delete = req.params.bookId
+    let deleted_book
+    bookID_to_delete = parseInt(bookID_to_delete)
+    for (let i = books.length-1; i >= 0; i--) {
+      const book = books[i];
+      if (book["id"] == bookID_to_delete){
+        deleted_book = book;
+        books.splice(i, 1)
+        console.log("hey")
+        break
+      }
+    }
+    res
+    .status(200)
+    .json(deleted_book);
+  });
+
 /* YOUR CODE ENDS HERE */
 
 /* DO NOT REMOVE OR CHANGE THE FOLLOWING (IT HAS TO BE AT THE END OF THE FILE) */
