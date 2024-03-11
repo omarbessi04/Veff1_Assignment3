@@ -125,17 +125,14 @@ app.delete(apiPath + version + "books/:bookId", (req, res) =>{
 
 app.patch(apiPath + version + "genres/:currentGenreId/books/:bookData", (req, res) =>{
   const book_id = parseInt(req.params.bookData)
-  const genre_id = req.params.currentGenreId
   let updated_book
-  console.log(req.body)
 
   for (let i = 0; i < books.length; i++) {
     const book = books[i]
     if (book["id"] === book_id){
-      console.log("YES")
       updated_book = book
+      req.body["id"] = parseInt(req.body["id"])
       books[i] = req.body
-      console.log(books[i])
       break
     }
   };
