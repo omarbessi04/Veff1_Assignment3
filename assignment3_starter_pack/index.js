@@ -53,6 +53,7 @@ const books = [
 /* YOUR CODE STARTS HERE */
 // TODO: Implement all logic from the assignment desription
 
+var idCounter = 4;
 const apiPath = "/api/";
 const version = "v1/";
 
@@ -63,10 +64,44 @@ app.get(apiPath + version + "books", (req, res) =>{
     .json(books);
 });
 
+//GET specific book
+app.get(apiPath + version + "books", (req, res) =>{
+  res
+    .status(200)
+    books.forEach( book => {
+      if (book.id == req.params.id){
+        res.json(book);
+      }
+    })  
+});
+
+//GET all genres
 app.get(apiPath + version + "genres", (req, res) =>{
   res
     .status(200)
     .json(genres);
+});
+
+//POST book
+app.post(apiPath + version + "books", (req, res) =>{
+  
+  const {title, author, genreId} = req.body;
+
+  // Create new book
+  const newBook = {
+    id: idCounter,
+    title,
+    author,
+    genreId,
+  }
+  
+  //Push book to list
+  books.push(newBook)
+  idCounter++
+
+  return res
+  .status(200)
+  .json({message:"new book recieved and logged"})
 });
 
 /* YOUR CODE ENDS HERE */
