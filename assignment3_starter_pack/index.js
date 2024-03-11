@@ -53,7 +53,8 @@ const books = [
 /* YOUR CODE STARTS HERE */
 // TODO: Implement all logic from the assignment desription
 
-var idCounter = 4;
+var BookIdCounter = 4;
+var GenreIdCounter = 5;
 const apiPath = "/api/";
 const version = "v1/";
 
@@ -89,7 +90,7 @@ app.post(apiPath + version + "books", (req, res) =>{
 
   // Create new book
   const newBook = {
-    id: idCounter,
+    id: BookIdCounter,
     title,
     author,
     genreId,
@@ -97,13 +98,14 @@ app.post(apiPath + version + "books", (req, res) =>{
   
   //Push book to list
   books.push(newBook)
-  idCounter++
+  BookIdCounter++
 
   return res
   .status(200)
   .json({message:"new book recieved and logged"})
 });
 
+//DELETE book
 app.delete(apiPath + version + "books/:bookId", (req, res) =>{
     let bookID_to_delete = req.params.bookId
     let deleted_book
@@ -119,7 +121,7 @@ app.delete(apiPath + version + "books/:bookId", (req, res) =>{
     res
     .status(200)
     .json(deleted_book);
-  });
+});
 
 app.patch(apiPath + version + "genres/:currentGenreId/books/:bookData", (req, res) =>{
   const book_id = parseInt(req.params.bookData)
@@ -143,6 +145,54 @@ app.patch(apiPath + version + "genres/:currentGenreId/books/:bookData", (req, re
 
 });
 
+//POST genre
+app.post(apiPath + version + "genres", (req, res) =>{
+  
+  const {id, name} = req.body;
+
+  // Create new book
+  const newGenre = {
+    id: GenreIdCounter,
+    name,
+  }
+  
+  //Push book to list
+  genres.push(newGenre)
+  GenreIdCounter++
+
+  return res
+  .status(200)
+  .json({message:"new genre recieved and logged"})
+});
+
+
+// DELETE genre
+app.delete(apiPath + version + "books/:genreId", (req, res) =>{
+    let deleted_genre;
+    let genreID_to_delete = req.params.genreId;
+    genreID_to_delete = parseInt(genreID_to_delete);
+
+    //check if book exists within genre
+    books.forEach( book => {
+      if (book.genreId == genreId){
+        res
+        .status(404)
+        .json("Book exists within genre. Genre will not be deleted");
+      }
+
+    for (let i = genres.length-1; i >= 0; i--) {
+      const genre = genres[i];
+      if (genre["id"] == genreID_to_delete){
+        deleted_genre = genre;
+        books.splice(i, 1);
+        break;
+      }
+    }
+    res
+    .status(200)
+    .json(deleted_genre);
+  });
+});
 /* YOUR CODE ENDS HERE */
 
 /* DO NOT REMOVE OR CHANGE THE FOLLOWING (IT HAS TO BE AT THE END OF THE FILE) */
