@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library Management System</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="headerContainer">
+    <header>
+      <h1>Library Management System</h1>
+      <nav>
+        <button id="newBookButton" class="prettyButton">
+          Add new book
+        </button>
+        <button id="newGenreButton" class="prettyButton">
+          Add new genre
+        </button>
+      </nav>
+    </header>
+  </div>
+
+  <main>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- Book Cards -->
+    <div id="bookContainer">
+      <div  id="bookList">
+        <!-- Books will be added here by JavaScript -->
+      </div >
+    </div>
+
+    <!-- Book Modal -->
+    <div id="addBookContainer">
+      <div id="addBookModal" class="modal">
+        <div class="modalContent">
+          <span class="closeBookButton">&times;</span>
+          <h2 id="modalHeading">Add new book</h2>
+          <form id="addBookForm">
+            <label for="title"><b>Book title:</b></label>
+            <input type="text" id="title" name="title" required />
+            <br /><br />
+            <label for="author"><b>Author:</b></label>
+            <input type="text" id="author" name="author" required />
+            <br /><br />
+            <label for="genre"><b>Genre:</b></label>
+            <select id="genre" name="genre">
+              <!-- Genre options will be added here by JavaScript -->
+            </select>
+            <br /><br />
+            <button type="submit" class="prettyButton">Submit Book</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Genre Modal -->
+    <div id="addGenreContainer">
+      <div id="addGenreModal" class="modal">
+        <div class="modalContent">
+          <span class="closeGenreButton">&times;</span>
+          <h2>Add new genre</h2>
+          <form id="addGenreForm">
+            <label for="genreName"><b>Genre name:</b></label>
+            <input type="text" id="genreName" name="genreName" required />
+            <br /><br />
+            <button type="submit" class="prettyButton">Submit Genre</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirmationModal" class="modal">
+      <div class="modalContent">
+        <span class="closeModal">&times;</span>
+        <h2 id="modalTitle">Are you sure?</h2>
+        <p id="modalText">
+          Do you want to delete the book "<span id="bookTitle"></span>"?
+        </p>
+        <div class="modalActions">
+          <button id="confirmDelete" class="confirmButton">
+            Yes, delete it!
+          </button>
+          <button id="cancelDelete" class="cancelButton">No, cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Site will only work over 599px -->
+    <div id="tooSmallWarning">
+      <p>
+        &#10060; This website requires at least 600px screen width. &#10060;
+      </p>
+    </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
