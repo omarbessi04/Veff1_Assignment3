@@ -174,7 +174,6 @@ app.post(apiPath + version + "genres", (req, res) =>{
 
 // DELETE genre
 app.delete(apiPath + version + "books/:genreId", (req, res) =>{
-  try
     let deleted_genre;
     let genreID_to_delete = req.params.genreId;
     genreID_to_delete = parseInt(genreID_to_delete);
@@ -198,7 +197,6 @@ app.delete(apiPath + version + "books/:genreId", (req, res) =>{
     res
     .status(200)
     .json(deleted_genre);
-  catch
     
   });
 });
