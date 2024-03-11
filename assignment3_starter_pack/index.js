@@ -54,13 +54,19 @@ const books = [
 // TODO: Implement all logic from the assignment desription
 
 const apiPath = "/api/";
-const version = "v1";
+const version = "v1/";
 
 //GET all books
-app.get(apiPath + version + "/books", (req, res) =>{
+app.get(apiPath + version + "books", (req, res) =>{
   res
     .status(501)
     .json(books);
+});
+
+app.get(apiPath + version + "genres", (req, res) =>{
+  res
+    .status(501)
+    .json(genres);
 });
 
 /* YOUR CODE ENDS HERE */
