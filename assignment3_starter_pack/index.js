@@ -112,12 +112,25 @@ app.post(apiPath + version + "books", (req, res) =>{
 //DELETE book
 app.delete(apiPath + version + "books/:bookId", (req, res) =>{
   try{
+    console.log(req.url)
+    if (typeof parseInt(req.originalUrl[14]) != "number"){
+      return res
+      .status(405)
+      .json("Method Not Allowed")
+    }
+  }
+    catch(error){
+      return res
+      .status(405)
+      .json("Method Not Allowed")
+    }
+    try{
     if (req.route["path"].includes(":bookId")){
-      console.log(req)
       let bookID_to_delete = req.params.bookId
       let deleted_book
       let found_book = false
       bookID_to_delete = parseInt(bookID_to_delete)
+      
 
       if (typeof bookID_to_delete != "number"){
         return res
