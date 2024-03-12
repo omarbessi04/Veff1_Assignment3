@@ -59,18 +59,24 @@ const apiPath = "/api/";
 const version = "v1/";
 
 //GET all books
-app.get(apiPath + version + "books", (req, res) =>{
+app.get(apiPath + version + "books?filter=", (req, res) =>{
+
+  console.log(req.params.filter)
+
   res
     .status(200)
     .json(books);
+
 });
 
 //GET specific book
 app.get(apiPath + version + "genres/:genreId/books/:bookId", (req, res) =>{
 
   var found_book
+
+  // Find book within book list
   books.forEach( book => {
-    if (book.id == req.params.id){
+    if (book.id == req.params.bookId){
       found_book = book;
     }
   }) 
@@ -169,15 +175,15 @@ app.patch(apiPath + version + "genres/:currentGenreId/books/:bookData", (req, re
   let updated_book
 
   for (let i = 0; i < books.length; i++) {
-    const book = books[i]
+    var book = books[i]
     if (book["id"] === book_id){
-      updated_book = book
       req.body["id"] = parseInt(req.body["id"])
-      books[i] = req.body
+      book = req.body
+      updated_book = book
       break
     }
   };
-  res
+  return res
   .status(200)
   .json(updated_book)
 
