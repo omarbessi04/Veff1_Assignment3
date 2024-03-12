@@ -103,15 +103,16 @@ app.post(apiPath + version + "books", (req, res) =>{
     genreId,
   }
   
-  if(!title || 
+  if( 
     typeof title != "string" || 
-    !author || 
+    !title.trim() ||
     typeof author != "string" ||
-    !genreId ||
-    typeof genreId != "number"){
+    !author.trim() || 
+    typeof genreId != "number"||
+    !genreId){
       return res
       .status(400)
-      .json("Joke")
+      .json("Bad Request")
   }
 
   //Push book to list
