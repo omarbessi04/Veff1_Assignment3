@@ -123,8 +123,8 @@ app.post(apiPath + version + "books", (req, res) =>{
   .json(newBook)
 });
 
-//DELETE book
-app.delete(apiPath + version + "books/:bookId", (req, res) =>{
+
+app.delete(apiPath + version + `books` + `/:bookId`, (req, res) =>{
       console.log(req.params.bookId)
       let bookID_to_delete = req.params.bookId
       let deleted_book
@@ -169,6 +169,13 @@ app.delete(apiPath + version + "books/:bookId", (req, res) =>{
     .status(405)
     .json({message: "Method Not Allowed"})
   }
+});
+
+//DELETE book
+app.delete(apiPath + version + `books`, (req, res) =>{
+  return res
+  .status(405)
+  .json({message: "Method Not Allowed"})
 });
 
 // UPDATE book
