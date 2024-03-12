@@ -125,7 +125,6 @@ app.post(apiPath + version + "books", (req, res) =>{
 
 
 app.delete(apiPath + version + `books` + `/:bookId`, (req, res) =>{
-      console.log(req.params.bookId)
       let bookID_to_delete = req.params.bookId
       let deleted_book
       let found_book = false
@@ -235,8 +234,9 @@ app.post(apiPath + version + "genres", (req, res) =>{
 
 // DELETE genre
 app.delete(apiPath + version + "genres/:genreId", (req, res) =>{
-    console(req.params.genreId)
+    console.log(req.params.genreId)
     let deleted_genre;
+    let found_genre = true;
     let genreID_to_delete = req.params.genreId;
     genreID_to_delete = parseInt(genreID_to_delete);
 
@@ -254,6 +254,7 @@ app.delete(apiPath + version + "genres/:genreId", (req, res) =>{
       if (genre["id"] === genreID_to_delete){
         deleted_genre = genre;
         books.splice(i, 1);
+        found_genre = true
         break;
       }
     }
