@@ -60,10 +60,32 @@ const version = "v1/";
 
 //GET all books
 app.get(apiPath + version + "books", (req, res) =>{
-  res
+  if (Object.keys(req.query) == false){
+  return res
     .status(200)
     .json(books);
-});
+  }
+  else{
+    const genre_name_to_get = req.query["filter"]
+    let genre_to_get
+    let book_list = []
+    genres.forEach(genre => {
+      if (genre["name"] == genre_name_to_get){
+        genre_to_get = genre
+        console.log(genre_to_get)
+      }
+    });
+    books.forEach(book => {
+      if(book["genreId"] == genre_to_get["id"]){
+        book_list.push(book)
+      }
+    });
+    return res
+    .status(200)
+    .json(book_list);
+  }
+  }
+);
 
 //GET specific book
 app.get(apiPath + version + "genres/:genreId/books/:bookId", (req, res) =>{
