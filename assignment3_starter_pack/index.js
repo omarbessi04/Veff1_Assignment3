@@ -66,14 +66,18 @@ app.get(apiPath + version + "books", (req, res) =>{
 });
 
 //GET specific book
-app.get(apiPath + version + "books", (req, res) =>{
+app.get(apiPath + version + "genres/:genreId/books/:bookId", (req, res) =>{
+
+  var found_book
+  books.forEach( book => {
+    if (book.id == req.params.id){
+      found_book = book;
+    }
+  }) 
+
   res
     .status(200)
-    books.forEach( book => {
-      if (book.id == req.params.id){
-        res.json(book);
-      }
-    })  
+    .json(found_book)
 });
 
 //GET all genres
@@ -153,8 +157,6 @@ app.delete(apiPath + version + "books/:bookId", (req, res) =>{
   }
 });
 
-
-
 app.patch(apiPath + version + "genres/:currentGenreId/books/:bookData", (req, res) =>{
   const book_id = parseInt(req.params.bookData)
   let updated_book
@@ -179,21 +181,36 @@ app.post(apiPath + version + "genres", (req, res) =>{
   
   const {id, name} = req.body;
 
-  // Create new book
+  // Create new genre
   const newGenre = {
     id: GenreIdCounter,
     name,
   }
-  
-  //Push book to list
+
+  // Check genre name
+  if (!name || typeof name != "string"){
+    return res
+    .status(400)
+    .json({message:"Invalid name type"})   
+  }
+
+  // Check if genre exists
+  genres.forEach(genre=>{
+    if (genre.name.toLowerCase() == name.toLowerCase()){
+      return res
+      .status(400)
+      .json({message:"Genre already exists"})   
+    }
+  })
+
+  //Push genre to list
   genres.push(newGenre)
   GenreIdCounter++
 
   return res
-  .status(200)
-  .json({message:"new genre recieved and logged"})
+  .status(201)
+  .json(newGenre)
 });
-
 
 // DELETE genre
 app.delete(apiPath + version + "books/:genreId", (req, res) =>{
@@ -205,7 +222,7 @@ app.delete(apiPath + version + "books/:genreId", (req, res) =>{
     books.forEach( book => {
       if (book.genreId == genreId){
         res
-        .status(404)
+        .status(400)
         .json("Book exists within genre. Genre will not be deleted");
       }
 
@@ -223,6 +240,7 @@ app.delete(apiPath + version + "books/:genreId", (req, res) =>{
     
   });
 });
+
 /* YOUR CODE ENDS HERE */
 
 /* DO NOT REMOVE OR CHANGE THE FOLLOWING (IT HAS TO BE AT THE END OF THE FILE) */
