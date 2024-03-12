@@ -84,6 +84,7 @@ app.get(apiPath + version + "genres/:genreId/books/:bookId", (req, res) =>{
 
 //GET all genres
 app.get(apiPath + version + "genres", (req, res) =>{
+  console.log("penismeister")
   res
     .status(200)
     .json(genres);
@@ -122,15 +123,14 @@ app.post(apiPath + version + "books", (req, res) =>{
   .json(newBook)
 });
 
-//DELETE book
-app.delete(apiPath + version + "books/:bookId", (req, res) =>{
-  try{
-    if (req.route["path"].includes(":bookId")){
-      console.log(req)
+
+app.delete(apiPath + version + `books` + `/:bookId`, (req, res) =>{
+      console.log(req.params.bookId)
       let bookID_to_delete = req.params.bookId
       let deleted_book
       let found_book = false
       bookID_to_delete = parseInt(bookID_to_delete)
+      if (bookID_to_delete != 0){
 
       if (typeof bookID_to_delete != "number"){
         return res
@@ -169,12 +169,13 @@ app.delete(apiPath + version + "books/:bookId", (req, res) =>{
     .status(405)
     .json({message: "Method Not Allowed"})
   }
-}
-  catch(error){
-    return res
-    .status(405)
-    .json({message: "Method Not Allowed"})
-  }
+});
+
+//DELETE book
+app.delete(apiPath + version + `books`, (req, res) =>{
+  return res
+  .status(405)
+  .json({message: "Method Not Allowed"})
 });
 
 // UPDATE book
@@ -199,7 +200,6 @@ app.patch(apiPath + version + "genres/:currentGenreId/books/:bookData", (req, re
 
 //POST genre
 app.post(apiPath + version + "genres", (req, res) =>{
-  
   const {id, name} = req.body;
 
   // Create new genre
@@ -234,32 +234,33 @@ app.post(apiPath + version + "genres", (req, res) =>{
 });
 
 // DELETE genre
-app.delete(apiPath + version + "books/:genreId", (req, res) =>{
+app.delete(apiPath + version + "genres/:genreId", (req, res) =>{
+    console(req.params.genreId)
     let deleted_genre;
     let genreID_to_delete = req.params.genreId;
     genreID_to_delete = parseInt(genreID_to_delete);
 
     //check if book exists within genre
     books.forEach( book => {
-      if (book.genreId == genreId){
-        res
-        .status(404)
-        .json("Book exists within genre. Genre will not be deleted");
+      if (book.genreId === genreID_to_delete){
+        return res
+        .status(400)
+        .json("Bad Request");
       }
+    });
 
     for (let i = genres.length-1; i >= 0; i--) {
       const genre = genres[i];
-      if (genre["id"] == genreID_to_delete){
+      if (genre["id"] === genreID_to_delete){
         deleted_genre = genre;
         books.splice(i, 1);
         break;
       }
     }
-    res
+    return res
     .status(200)
     .json(deleted_genre);
     
-  });
 });
 
 /* YOUR CODE ENDS HERE */
