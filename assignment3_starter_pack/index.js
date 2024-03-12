@@ -110,7 +110,7 @@ app.post(apiPath + version + "books", (req, res) =>{
     typeof genreId != "number"){
       return res
       .status(400)
-      .json("Joke")
+      .json("Bad Request")
   }
 
   //Push book to list
