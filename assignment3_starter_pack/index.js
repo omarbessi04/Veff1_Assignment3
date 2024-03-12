@@ -1,3 +1,4 @@
+
 //Sample for Assignment 3
 const express = require("express");
 
@@ -59,14 +60,10 @@ const apiPath = "/api/";
 const version = "v1/";
 
 //GET all books
-app.get(apiPath + version + "books?filter=", (req, res) =>{
-
-  console.log(req.params.filter)
-
+app.get(apiPath + version + "books", (req, res) =>{
   res
     .status(200)
     .json(books);
-
 });
 
 //GET specific book
