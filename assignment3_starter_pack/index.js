@@ -112,46 +112,53 @@ app.post(apiPath + version + "books", (req, res) =>{
 //DELETE book
 app.delete(apiPath + version + "books/:bookId", (req, res) =>{
   try{
-    let bookID_to_delete = req.params.bookId
-    let deleted_book
-    let found_book = false
-    bookID_to_delete = parseInt(bookID_to_delete)
+    if (req.route["path"].includes(":bookId")){
+      console.log(req)
+      let bookID_to_delete = req.params.bookId
+      let deleted_book
+      let found_book = false
+      bookID_to_delete = parseInt(bookID_to_delete)
 
-    if (bookID_to_delete == null || typeof bookID_to_delete != "number"){
-      res
-      .status(400)
-      .json({message: "Bad request"})
-    }
-    
-    if (bookID_to_delete % 1 != 0){
+      if (typeof bookID_to_delete != "number"){
+        return res
+        .status(400)
+        .json({message: "Bad request"})
+      }
+      
+      if (bookID_to_delete % 1 !== 0){
+        return res
+        .status (400)
+        .json({message: "Bad request"})
+      }
 
-      res
-      .status (400)
-      .json({message: "Bad request"})
-    }
-
-    for (let i = books.length-1; i >= 0; i--) {
-      const book = books[i];
-      if (book["id"] == bookID_to_delete){
-        deleted_book = book;
-        books.splice(i, 1)
-        found_book = true
-        break
+      for (let i = books.length-1; i >= 0; i--) {
+        const book = books[i];
+        if (book["id"] == bookID_to_delete){
+          deleted_book = book;
+          books.splice(i, 1)
+          found_book = true
+          break
+        }
+      }
+      if (found_book === true){
+      return res
+      .status(200)
+      .json(deleted_book);
+      }
+      else{
+        return res
+        .status(404)
+        .json({message: "book not found"})
       }
     }
-    if (found_book === true){
-    res
-    .status(200)
-    .json(deleted_book);
-    }
-    else{
-      res
-      .status(404)
-      .json({message: "book not found"})
-    }
+  else{
+      return res
+    .status(405)
+    .json({message: "Method Not Allowed"})
   }
+}
   catch(error){
-    res
+    return res
     .status(405)
     .json({message: "Method Not Allowed"})
   }
