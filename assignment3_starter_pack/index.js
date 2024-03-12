@@ -95,6 +95,19 @@ app.post(apiPath + version + "books", (req, res) =>{
   
   const {title, author, genreId} = req.body;
   console.log(title, author, genreId)
+
+  // Check if genre is legal
+  var current_genres = []
+  genres.forEach(genre =>{
+    current_genres.push(genre.id)
+  })
+
+  if(!current_genres.includes(genreId)){
+    return res
+    .status(400)
+    .json("Bad Request")
+  }
+
   // Create new book
   const newBook = {
     id: BookIdCounter,
@@ -111,7 +124,7 @@ app.post(apiPath + version + "books", (req, res) =>{
     typeof genreId != "number"){
       return res
       .status(400)
-      .json("Joke")
+      .json("Bad Request")
   }
 
   //Push book to list
@@ -123,7 +136,7 @@ app.post(apiPath + version + "books", (req, res) =>{
   .json(newBook)
 });
 
-
+//DELETE book w. bookId
 app.delete(apiPath + version + `books` + `/:bookId`, (req, res) =>{
       let bookID_to_delete = req.params.bookId
       let deleted_book
@@ -170,7 +183,7 @@ app.delete(apiPath + version + `books` + `/:bookId`, (req, res) =>{
   }
 });
 
-//DELETE book
+//DELETE book wo. bookId
 app.delete(apiPath + version + `books`, (req, res) =>{
   return res
   .status(405)
@@ -181,6 +194,24 @@ app.delete(apiPath + version + `books`, (req, res) =>{
 app.patch(apiPath + version + "genres/:currentGenreId/books/:bookData", (req, res) =>{
   const book_id = parseInt(req.params.bookData)
   let updated_book
+
+    // Check if genre is legal
+    var current_genre_ids = []
+    genres.forEach(genre =>{
+      current_genre_ids.push(genre.id)
+    })
+
+    // Check if id is legal
+    var current_book_ids = []
+    books.forEach(book =>{
+      current_book_ids.push(book.id)
+    })
+    
+    if(!current_book_ids.includes(req.body.id) || !current_genre_ids.includes(req.body.genreId)){ ////////////////////////
+      return res
+      .status(400)
+      .json("Bad Request")
+    }
 
   for (let i = 0; i < books.length; i++) {
     var book = books[i]
