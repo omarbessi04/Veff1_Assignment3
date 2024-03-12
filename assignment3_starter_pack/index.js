@@ -103,16 +103,15 @@ app.post(apiPath + version + "books", (req, res) =>{
     genreId,
   }
   
-  if( 
+  if(!title || 
     typeof title != "string" || 
-    !title.trim() ||
+    !author || 
     typeof author != "string" ||
-    !author.trim() || 
-    typeof genreId != "number"||
-    !genreId){
+    !genreId ||
+    typeof genreId != "number"){
       return res
       .status(400)
-      .json("Bad Request")
+      .json("Joke")
   }
 
   //Push book to list
@@ -237,7 +236,7 @@ app.post(apiPath + version + "genres", (req, res) =>{
 app.delete(apiPath + version + "genres/:genreId", (req, res) =>{
     console.log(req.params.genreId)
     let deleted_genre;
-    let found_genre = true;
+    let found_genre = false;
     let genreID_to_delete = req.params.genreId;
     genreID_to_delete = parseInt(genreID_to_delete);
 
@@ -259,10 +258,23 @@ app.delete(apiPath + version + "genres/:genreId", (req, res) =>{
         break;
       }
     }
+    if (found_genre == true){
     return res
     .status(200)
     .json(deleted_genre);
-    
+    }
+    else{
+      return res
+      .status(404)
+      .json({message: "Genre not found"})
+    }
+});
+
+//DELETE book
+app.delete(apiPath + version + `genres`, (req, res) =>{
+  return res
+  .status(405)
+  .json({message: "Method Not Allowed"})
 });
 
 /* YOUR CODE ENDS HERE */
