@@ -93,7 +93,7 @@ app.get(apiPath + version + "genres", (req, res) =>{
 app.post(apiPath + version + "books", (req, res) =>{
   
   const {title, author, genreId} = req.body;
-
+  console.log(title, author, genreId)
   // Create new book
   const newBook = {
     id: BookIdCounter,
@@ -102,13 +102,24 @@ app.post(apiPath + version + "books", (req, res) =>{
     genreId,
   }
   
+  if(!title || 
+    typeof title != "string" || 
+    !author || 
+    typeof author != "string" ||
+    !genreId ||
+    typeof genreId != "number"){
+      return res
+      .status(400)
+      .json("Joke")
+  }
+
   //Push book to list
   books.push(newBook)
   BookIdCounter++
 
   return res
-  .status(200)
-  .json({message:"new book recieved and logged"})
+  .status(201)
+  .json(newBook)
 });
 
 //DELETE book
@@ -166,6 +177,7 @@ app.delete(apiPath + version + "books/:bookId", (req, res) =>{
   }
 });
 
+// UPDATE book
 app.patch(apiPath + version + "genres/:currentGenreId/books/:bookData", (req, res) =>{
   const book_id = parseInt(req.params.bookData)
   let updated_book
@@ -231,7 +243,7 @@ app.delete(apiPath + version + "books/:genreId", (req, res) =>{
     books.forEach( book => {
       if (book.genreId == genreId){
         res
-        .status(400)
+        .status(404)
         .json("Book exists within genre. Genre will not be deleted");
       }
 
