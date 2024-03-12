@@ -61,30 +61,42 @@ const version = "v1/";
 //GET all books
 app.get(apiPath + version + "books", (req, res) =>{
   if (Object.keys(req.query) == false){
-  return res
+  res
     .status(200)
     .json(books);
   }
   else{
-    const genre_name_to_get = req.query["filter"]
-    let genre_to_get
-    let book_list = []
-    genres.forEach(genre => {
-      if (genre["name"] == genre_name_to_get){
-        genre_to_get = genre
-        console.log(genre_to_get)
+    if (Object.keys(req.query) == "filter"){
+      const genre_name_to_get = req.query["filter"].toLowerCase()
+      let genre_to_get = null
+      let book_list = []
+      genres.forEach(genre => {
+        if (genre["name"].toLowerCase() == genre_name_to_get){
+          genre_to_get = genre
+          console.log(genre_to_get)
+        }
+      });
+      if (genre_to_get == null){
+        return res
+        .status(200)
+        .json(book_list)
       }
-    });
-    books.forEach(book => {
-      if(book["genreId"] == genre_to_get["id"]){
-        book_list.push(book)
-      }
-    });
+      books.forEach(book => {
+        if(book["genreId"] == genre_to_get["id"]){
+          book_list.push(book)
+        }
+      });
+      res
+      .status(200)
+      .json(book_list);
+    }
+  else{
     return res
-    .status(200)
-    .json(book_list);
+    .status(400)
+    .json("bad request")
   }
   }
+}
 );
 
 //GET specific book
