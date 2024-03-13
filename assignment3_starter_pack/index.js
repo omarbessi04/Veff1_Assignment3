@@ -53,93 +53,80 @@ const books = [
 /* YOUR CODE STARTS HERE */
 // TODO: Implement all logic from the assignment desription
 
-var BookIdCounter = 4;
-var GenreIdCounter = 5;
+let BookIdCounter = 4;
+let GenreIdCounter = 5;
 const apiPath = "/api/";
 const version = "v1/";
 
 //GET all books
-app.get(apiPath + version + "books", (req, res) =>{
-  if (Object.keys(req.query) == false){
-  res
-    .status(200)
-    .json(books);
-  }
-  else{
-    if (Object.keys(req.query) == "filter"){
-      const genre_name_to_get = req.query["filter"].toLowerCase()
-      let genre_to_get = null
-      let book_list = []
-      genres.forEach(genre => {
-        if (genre["name"].toLowerCase() == genre_name_to_get){
-          genre_to_get = genre
-          console.log(genre_to_get)
+app.get(apiPath + version + "books", (req, res) => {
+  if (Object.keys(req.query) == false) {
+    res.status(200).json(books);
+  } else {
+    if (Object.keys(req.query) == "filter") {
+      const genre_name_to_get = req.query["filter"].toLowerCase();
+      let genre_to_get = null;
+      let book_list = [];
+      genres.forEach((genre) => {
+        if (genre["name"].toLowerCase() == genre_name_to_get) {
+          genre_to_get = genre;
+          console.log(genre_to_get);
         }
       });
-      if (genre_to_get == null){
-        return res
-        .status(200)
-        .json(book_list)
+      if (genre_to_get == null) {
+        return res.status(200).json(book_list);
       }
-      books.forEach(book => {
-        if(book["genreId"] == genre_to_get["id"]){
-          book_list.push(book)
+      books.forEach((book) => {
+        if (book["genreId"] == genre_to_get["id"]) {
+          book_list.push(book);
         }
       });
-      res
-      .status(200)
-      .json(book_list);
+      res.status(200).json(book_list);
+    } else {
+      return res.status(400).json("bad request");
     }
-  else{
-    return res
-    .status(400)
-    .json("bad request")
   }
-  }
-}
-);
+});
 
 //GET specific book
-app.get(apiPath + version + "genres/:genreId/books/:bookId", (req, res) =>{
-
-  var found_book
+app.get(apiPath + version + "genres/:genreId/books/:bookId", (req, res) => {
+  let found_book;
 
   // Find book within book list
-  books.forEach( book => {
-    if (book.id == req.params.bookId){
+  books.forEach((book) => {
+    if (book.id == req.params.bookId) {
       found_book = book;
     }
-  }) 
+  });
 
-  res
-    .status(200)
-    .json(found_book)
+  res.status(200).json(found_book);
 });
 
 //GET all genres
-app.get(apiPath + version + "genres", (req, res) =>{
-  console.log("penismeister")
-  res
-    .status(200)
-    .json(genres);
+app.get(apiPath + version + "genres", (req, res) => {
+  res.status(200).json(genres);
 });
 
 //POST book
-app.post(apiPath + version + "books", (req, res) =>{
-  
-  const {title, author, genreId} = req.body;
-  console.log(title, author, genreId)
+app.post(apiPath + version + "books", (req, res) => {
+  console.log(req);
 
-  // Check if genre is legal
-  var current_genres = []
-  genres.forEach(genre =>{
-    current_genres.push(genre.id)
-  })
+  const { new_book_id, title, author, genreId } = req.body;
+  const genreFound = genres.find((genre) => genre.id === genreId);
 
-  if(!current_genres.includes(genreId)){
-    return res
-    .status(400)
-    .json("Bad Request")
+  // Test input variables
+  if (
+    typeof title !== "string" ||
+    !title.trim() ||
+    typeof author !== "string" ||
+    !author.trim() ||
+    typeof genreId !== "number" ||
+    !genreId ||
+    !genreFound
+  ) {
+    if (genreId !== 0) {
+      return res.status(400).json({ message: "Bad Request, hello" });
+    }
   }
 
   // Create new book
@@ -148,198 +135,162 @@ app.post(apiPath + version + "books", (req, res) =>{
     title,
     author,
     genreId,
-  }
-  
-  if(!title || 
-    typeof title != "string" || 
-    !author || 
-    typeof author != "string" ||
-    !genreId ||
-    typeof genreId != "number"){
-      return res
-      .status(400)
-      .json("Bad Request")
-  }
+  };
 
   //Push book to list
-  books.push(newBook)
-  BookIdCounter++
+  books.push(newBook);
+  BookIdCounter++;
 
-  return res
-  .status(201)
-  .json(newBook)
+  return res.status(201).json(newBook);
 });
 
 //DELETE book w. bookId
-app.delete(apiPath + version + `books` + `/:bookId`, (req, res) =>{
-      let bookID_to_delete = req.params.bookId
-      let deleted_book
-      let found_book = false
-      bookID_to_delete = parseInt(bookID_to_delete)
-      if (bookID_to_delete != 0){
+app.delete(apiPath + version + `books` + `/:bookId`, (req, res) => {
+  let bookID_to_delete = req.params.bookId;
+  let deleted_book;
+  let found_book = false;
+  bookID_to_delete = parseInt(bookID_to_delete);
+  if (bookID_to_delete != 0) {
+    if (typeof bookID_to_delete != "number") {
+      return res.status(400).json({ message: "Bad request" });
+    }
 
-      if (typeof bookID_to_delete != "number"){
-        return res
-        .status(400)
-        .json({message: "Bad request"})
-      }
-      
-      if (bookID_to_delete % 1 !== 0){
-        return res
-        .status (400)
-        .json({message: "Bad request"})
-      }
+    if (bookID_to_delete % 1 !== 0) {
+      return res.status(400).json({ message: "Bad request" });
+    }
 
-      for (let i = books.length-1; i >= 0; i--) {
-        const book = books[i];
-        if (book["id"] == bookID_to_delete){
-          deleted_book = book;
-          books.splice(i, 1)
-          found_book = true
-          break
-        }
-      }
-      if (found_book === true){
-      return res
-      .status(200)
-      .json(deleted_book);
-      }
-      else{
-        return res
-        .status(404)
-        .json({message: "book not found"})
+    for (let i = books.length - 1; i >= 0; i--) {
+      const book = books[i];
+      if (book["id"] == bookID_to_delete) {
+        deleted_book = book;
+        books.splice(i, 1);
+        found_book = true;
+        break;
       }
     }
-  else{
-      return res
-    .status(405)
-    .json({message: "Method Not Allowed"})
+    if (found_book === true) {
+      return res.status(200).json(deleted_book);
+    } else {
+      return res.status(404).json({ message: "book not found" });
+    }
+  } else {
+    return res.status(405).json({ message: "Method Not Allowed" });
   }
 });
 
 //DELETE book wo. bookId
-app.delete(apiPath + version + `books`, (req, res) =>{
-  return res
-  .status(405)
-  .json({message: "Method Not Allowed"})
+app.delete(apiPath + version + `books`, (req, res) => {
+  return res.status(405).json({ message: "Method Not Allowed" });
 });
 
 // UPDATE book
-app.patch(apiPath + version + "genres/:currentGenreId/books/:bookData", (req, res) =>{
-  const book_id = parseInt(req.params.bookData)
-  let updated_book
+app.patch(
+  apiPath + version + "genres/:currentGenreId/books/:bookId",
+  (req, res) => {
+    const book_id = parseInt(req.params.bookId);
 
-    // Check if genre is legal
-    var current_genre_ids = []
-    genres.forEach(genre =>{
-      current_genre_ids.push(genre.id)
-    })
+    console.log(req.params);
+    console.log(req.body);
+    genreFound = genres.find((genre) => genre.id == req.params.currentGenreId);
+    bookFound = books.find((book) => book.id == book_id);
 
-    // Check if id is legal
-    var current_book_ids = []
-    books.forEach(book =>{
-      current_book_ids.push(book.id)
-    })
-    
-    if(!current_book_ids.includes(req.body.id) || !current_genre_ids.includes(req.body.genreId)){ ////////////////////////
+    if (!bookFound) {
       return res
-      .status(400)
-      .json("Bad Request")
+        .status(400)
+        .json({ message: "Not able to find book with specified id" });
     }
 
-  for (let i = 0; i < books.length; i++) {
-    var book = books[i]
-    if (book["id"] === book_id){
-      req.body["id"] = parseInt(req.body["id"])
-      book = req.body
-      updated_book = book
-      break
+    if (bookFound.genreId != req.params.currentGenreId) {
+      return res
+        .status(404)
+        .json({ message: "Current genre and genre of book do not match" });
     }
-  };
-  return res
-  .status(200)
-  .json(updated_book)
 
-});
+    if (!genreFound) {
+      //return res.status(404).json({ message: "Not Found" });
+      return res.status(400).json({ message: "Genre does not exits" });
+    }
+
+    // If all checks work, update the book
+    if (req.body.title) {
+      bookFound.title = req.body.title;
+    }
+
+    if (req.body.author) {
+      bookFound.author = req.body.author;
+    }
+
+    if (req.body.genre) {
+      bookFound.genreID = Number(req.body.genre);
+    }
+
+    return res.status(200).json(bookFound);
+  }
+);
 
 //POST genre
-app.post(apiPath + version + "genres", (req, res) =>{
-  const {id, name} = req.body;
+app.post(apiPath + version + "genres", (req, res) => {
+  const { id, name } = req.body;
 
   // Create new genre
   const newGenre = {
     id: GenreIdCounter,
     name,
-  }
+  };
 
   // Check genre name
-  if (!name || typeof name != "string"){
-    return res
-    .status(400)
-    .json({message:"Invalid name type"})   
+  if (!name || typeof name != "string") {
+    return res.status(400).json({ message: "Invalid name type" });
   }
 
   // Check if genre exists
-  genres.forEach(genre=>{
-    if (genre.name.toLowerCase() == name.toLowerCase()){
-      return res
-      .status(400)
-      .json({message:"Genre already exists"})   
+  genres.forEach((genre) => {
+    if (genre.name.toLowerCase() == name.toLowerCase()) {
+      return res.status(400).json({ message: "Genre already exists" });
     }
-  })
+  });
 
   //Push genre to list
-  genres.push(newGenre)
-  GenreIdCounter++
+  genres.push(newGenre);
+  GenreIdCounter++;
 
-  return res
-  .status(201)
-  .json(newGenre)
+  return res.status(201).json(newGenre);
 });
 
 // DELETE genre
-app.delete(apiPath + version + "genres/:genreId", (req, res) =>{
-    console.log(req.params.genreId)
-    let deleted_genre;
-    let found_genre = false;
-    let genreID_to_delete = req.params.genreId;
-    genreID_to_delete = parseInt(genreID_to_delete);
+app.delete(apiPath + version + "genres/:genreId", (req, res) => {
+  console.log(req.params.genreId);
+  let deleted_genre;
+  let found_genre = false;
+  let genreID_to_delete = req.params.genreId;
+  genreID_to_delete = parseInt(genreID_to_delete);
 
-    //check if book exists within genre
-    books.forEach( book => {
-      if (book.genreId === genreID_to_delete){
-        return res
-        .status(400)
-        .json("Bad Request");
-      }
-    });
+  //check if book exists within genre
+  books.forEach((book) => {
+    if (book.genreId === genreID_to_delete) {
+      return res.status(400).json("Bad Request");
+    }
+  });
 
-    for (let i = genres.length-1; i >= 0; i--) {
-      const genre = genres[i];
-      if (genre["id"] === genreID_to_delete){
-        deleted_genre = genre;
-        books.splice(i, 1);
-        found_genre = true
-        break;
-      }
+  for (let i = genres.length - 1; i >= 0; i--) {
+    const genre = genres[i];
+    if (genre["id"] === genreID_to_delete) {
+      deleted_genre = genre;
+      books.splice(i, 1);
+      found_genre = true;
+      break;
     }
-    if (found_genre == true){
-    return res
-    .status(200)
-    .json(deleted_genre);
-    }
-    else{
-      return res
-      .status(404)
-      .json({message: "Genre not found"})
-    }
+  }
+  if (found_genre == true) {
+    return res.status(200).json(deleted_genre);
+  } else {
+    return res.status(404).json({ message: "Genre not found" });
+  }
 });
 
 //DELETE book
-app.delete(apiPath + version + `genres`, (req, res) =>{
-  return res
-  .status(405)
-  .json({message: "Method Not Allowed"})
+app.delete(apiPath + version + `genres`, (req, res) => {
+  return res.status(405).json({ message: "Method Not Allowed" });
 });
 
 /* YOUR CODE ENDS HERE */
